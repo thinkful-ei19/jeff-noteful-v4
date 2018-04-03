@@ -1,18 +1,24 @@
 'use strict';
-
+const dotenv = require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
 
 const { PORT, MONGODB_URI } = require('./config');
 
 const notesRouter = require('./routes/notes');
 const foldersRouter = require('./routes/folders');
 const tagsRouter = require('./routes/tags');
-
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 // Create an Express application
 const app = express();
-
+// Using our passport
+passport.use(jwtStrategy);
+passport.use(localStrategy);
 // Log all requests. Skip logging during
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common', {
   skip: () => process.env.NODE_ENV === 'test'
@@ -25,9 +31,15 @@ app.use(express.static('public'));
 app.use(express.json());
 
 // Mount routers
+app.use('/api', usersRouter);
+app.use('/api',authRouter);
+
+app.use(passport.authenticate('jwt', { session: false, failWithError: true }));
+
 app.use('/api', notesRouter);
 app.use('/api', foldersRouter);
 app.use('/api', tagsRouter);
+
 
 // Catch-all 404
 app.use(function (req, res, next) {
