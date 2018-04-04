@@ -10,8 +10,9 @@ const Note = require('../models/note');
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/notes', (req, res, next) => {
   const { searchTerm, folderId, tagId } = req.query;
+ const userId = req.user.id;
 
-  let filter = {};
+  let filter = {userId};
 
   /**
    * BONUS CHALLENGE - Search both title and content using $OR Operator
@@ -41,10 +42,11 @@ router.get('/notes', (req, res, next) => {
       next(err);
     });
 });
-
+//
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/notes/:id', (req, res, next) => {
   const { id } = req.params;
+  const userId =req.user.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
@@ -52,7 +54,7 @@ router.get('/notes/:id', (req, res, next) => {
     return next(err);
   }
 
-  Note.findById(id)
+  Note.findOne({_id:id,userId})
     .populate('tags')
     .then(result => {
       if (result) {
@@ -69,14 +71,17 @@ router.get('/notes/:id', (req, res, next) => {
 /* ========== POST/CREATE AN ITEM ========== */
 router.post('/notes', (req, res, next) => {
   const { title, content, folderId, tags } = req.body;
-
+  const userId = req.user.id;
+  const newItem = { title, content,tags,userId  };
   /***** Never trust users - validate input *****/
   if (!title) {
     const err = new Error('Missing `title` in request body');
     err.status = 400;
     return next(err);
   }
-
+ if(mongoose.Types.ObjectId.isValid(folderId)){
+ newItem.folderId = folderId;
+ }
   if (tags) {
     tags.forEach((tag) => {
       if (!mongoose.Types.ObjectId.isValid(tag)) {
@@ -87,7 +92,7 @@ router.post('/notes', (req, res, next) => {
     });
   }
 
-  const newItem = { title, content, folderId, tags };
+
 
   Note.create(newItem)
     .then(result => {
@@ -97,12 +102,13 @@ router.post('/notes', (req, res, next) => {
       next(err);
     });
 });
-
+//
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/notes/:id', (req, res, next) => {
   const { id } = req.params;
-  const { title, content, folderId, tags } = req.body;
-  const updateItem = { title, content, tags };
+  const { title, content, folderId, tags} = req.body;
+  const userId = req.user.id;
+  const updateItem = { title, content, tags, userId};
   const options = { new: true };
   /***** Never trust users - validate input *****/
   if (!title) {
