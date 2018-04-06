@@ -1,3 +1,5 @@
+import { JWT_SECRET } from '../config';
+
 'use strict';
 const app = require('../server');
 const chai = require('chai');
@@ -16,16 +18,27 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Noteful API - Notes', function () {
+  let user = {};
+  let token;
+   
   before(function () {
     return mongoose.connect(TEST_MONGODB_URI)
       .then(() => mongoose.connection.db.dropDatabase());
   });
 
   beforeEach(function () {
-    const noteInsertPromise = Note.insertMany(seedNotes);
-    const folderInsertPromise = Folder.insertMany(seedFolders);
-    return Promise.all([noteInsertPromise, folderInsertPromise])
-      .then(() => Note.ensureIndexes());
+    return Promise.all([
+ User.insertMany(seedUsers),
+ User.ensureIndexes(),
+ Note.insertMany(seedNotes),
+ Folder.insertMany(seedFolders),
+ Folder.ensureIndexes(),
+ Tag.insertMany(seedTags),
+ Tag.ensureIndexes()
+])
+      .then(([users]) =>
+      user = users[0];
+      token = jwt.sign({user},JWT_SECRET, {subject:user.username})
   });
 
   afterEach(function () {

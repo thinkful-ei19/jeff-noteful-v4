@@ -7,7 +7,9 @@ const mongoose = require('mongoose');
 const { TEST_MONGODB_URI } = require('../config');
 
 const Tag = require('../models/tag');
-const seedTags = require('../db/seed/tags');
+const seedTags = require('../db/seed/tags')
+const User = require('../models/user')
+const seedUsers = require('../db/seed/users')
 
 
 const expect = chai.expect;
@@ -23,6 +25,7 @@ describe('Noteful API - Tags', function () {
   beforeEach(function () {
     return Tag.insertMany(seedTags)
       .then(() => Tag.ensureIndexes());
+
   });
 
   afterEach(function () {

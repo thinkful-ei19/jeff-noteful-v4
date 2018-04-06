@@ -107,7 +107,7 @@ router.put('/folders/:id', (req, res, next) => {
       next(err);
     });
 });
-
+//
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/folders/:id', (req, res, next) => {
   const { id } = req.params;

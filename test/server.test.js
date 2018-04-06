@@ -7,6 +7,82 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
+describe('Server Test', function (){
+  let user;
+  let token;
+
+  before(function () {
+    return mongoose.connect(TEST_MONGODB_URI)
+      .then(() => mongoose.connection.db.dropDatabase());
+  });
+
+
+  beforeEach(function () {
+    return Promise.all([
+      User.insertMany(seedUsers),
+      Folder.insertMany(seedFolders),
+      Folder.ensureIndexes()
+    ]).then(([users]) => {
+
+      user = users[0];
+      token = jwt.sign({
+        user
+      }, JWT_SECRET, {
+        subject: user.username
+      })
+    });
+  });
+
+  afterEach(function () {
+    return mongoose.connection.db.dropDatabase();
+  });
+
+  after(function () {
+    return mongoose.disconnect();
+  });
+
+  describe('GET /api/folders', function () {
+
+    it('should return the correct number of folders', function () {
+      const dbPromise = Folder.find({
+        userId: user.id
+      });
+      const apiPromise = chai.request(app)
+        .get('/api/folders')
+        .set('Authorization', `Bearer ${token}`);
+      return Promise.all([dbPromise, apiPromise])
+        .then(([data, res]) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          expect(res.body).to.have.length(data.length);
+        });
+    });
+
+    it('should return a list with the correct right fields', function () {
+      const dbPromise = Folder.find({
+        userId: user.id
+      });
+      const apiPromise = chai
+        .request(app)
+        .get('/api/folders')
+        .set('Authorization', ` Bearer ${token}`)
+
+      return Promise.all([dbPromise, apiPromise])
+        .then(([data, res]) => {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('array');
+          expect(res.body).to.have.length(data.length);
+          res.body.forEach(function (item) {
+            expect(item).to.be.a('object');
+            expect(item).to.have.keys('id', 'name', 'userId');
+          });
+        });
+    });
+
+  });
+
 describe('Reality Check', () => {
 
   it('true should be true', () => {
@@ -48,6 +124,7 @@ describe('Basic Express setup', () => {
     it('should respond with 404 when given a bad path', () => {
       return chai.request(app)
         .get('/bad/path')
+        .set('Authorization',`Bearer${token}`)
         .catch(err => err.response)
         .then(res => {
           expect(res).to.have.status(404);
@@ -55,4 +132,5 @@ describe('Basic Express setup', () => {
     });
 
   });
+})
 });

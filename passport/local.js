@@ -14,7 +14,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
           location: 'username'
         });
       }
-      return user.validatePassword(password);
+     return user.validatePassword(password);
     })
     .then(isValid => {
       if (!isValid) {
