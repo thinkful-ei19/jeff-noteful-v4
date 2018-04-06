@@ -3,8 +3,7 @@ node_js: node
 services: mongodb
 deploy:
   provider: heroku
-  api_key:6262f741-9201-496d-9440-ce87af22a8f2
-    secure: HzBGHJIP6Zwqzqrl82vHbTaG7n+NvS3NwzNSZvommOPlDagHmBVZFS2KyEQifl5iqhlj4IhdMn6FkWgkpF8K7H/B2ChmqyaWb4f/+Mm5n9jOJrXgQZKbzDgaONLXDrKDq8GbcV7FGlmyCzL6YHvbGvczcD2b61XxvP3V/DXiaPQzyHuCkF+NgoYgLKwe4pk4UAza22AOJhm8N6EIUB33nuqbNeUHlblPo2TLTpTenclh88NSzq6eAdZ2eqy/nsZ+sT7X4s8/u3lsvHP//lQMxfUzE7EFMuL7HJc7tUQbSFlFJL8ptL0RTiXut5Ih2aD0Kdr2X6gjhyzQRH0+kntwzJSrzOv6jOJ85Q8hdYuXpoi9XE0TpLDseH+XVz7oeJ/v0HD5DnDuYssXL1/aPCRFaYjViaJwPf/12b5zB6zaW6sRB8sTnMy/4IdBqIP6Ufli2DSXOPAvCWJsNqjdjkP0Lac28+id99nLBvfiw4DZiEvDO1sbaYu/6EgY8fhCHhNhMa/rcRgne44Ie76fOwsSLMt9nrVfUgvxEt6gvK+WFLoyyQlm7187t8CqJJ3KhR+aH9q/T/1tSgyB+YnXwkQXgu3RfExXQw9hpLKCtK3i8Z7csx7APhTaddy4g7VyZ36K4Ta0Bux2ayNYT1FD2aebDQYuyVMDjronZObr66kWKV8=
+  api_key: 6262f741-9201-496d-9440-ce87af22a8f2
   app: jeff-noteful-v4
   on:
     repo: thinkful-ei19/jeff-noteful-v4
