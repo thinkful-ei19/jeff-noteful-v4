@@ -21,7 +21,7 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Noteful API - Folders', function () {
+describe.only('Noteful API - Folders', function () {
   let user;
   let token;
 
