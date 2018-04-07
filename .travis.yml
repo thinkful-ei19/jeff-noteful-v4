@@ -8,3 +8,4 @@ deploy:
   app: jeff-noteful-v4
   on:
     repo: thinkful-ei19/jeff-noteful-v4
+    branch: master
